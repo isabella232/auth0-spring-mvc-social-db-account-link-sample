@@ -28,7 +28,7 @@
         $(function () {
             var lock = new Auth0Lock('${clientId}', '${domain}');
             lock.showSignin({
-                connections: ['${socialConnection}','${passwordConnection}'],
+                connections: ['${socialConnection}', '${passwordConnection}'],
                 authParams: {
                     state: '${state}'
                 },
