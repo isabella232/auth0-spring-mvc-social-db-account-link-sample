@@ -4,10 +4,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.auth0.example</groupId>
-    <artifactId>auth0-spring-boot-social-dbconnection-link</artifactId>
+    <artifactId>auth0-spring-mvc-social-db-account-link-sample</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Auth0 Spring Boot Web JSP Sample</name>
-    <description>Auth0 Spring Boot Web JSP Sample</description>
+    <name>auth0-spring-mvc-social-db-account-link-sample</name>
+    <description>auth0 spring mvc social db account link sample</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
