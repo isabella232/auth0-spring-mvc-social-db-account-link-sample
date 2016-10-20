@@ -11,15 +11,15 @@
     <link rel="stylesheet" type="text/css" href="/css/jquery.growl.css"/>
     <link rel="stylesheet" type="text/css" href="/css/password.css">
     <script src="http://code.jquery.com/jquery.js"></script>
-    <script src="http://cdn.auth0.com/w2/auth0-6.8.js"></script>
+    <script src="//cdn.auth0.com/w2/auth0-7.2.1.js"></script>
     <script src="/js/jquery.growl.js" type="text/javascript"></script>
 </head>
 <body>
 
 <script type="text/javascript">
     var auth0 = new Auth0({
-        clientID: '${clientId}',
         domain: '${domain}',
+        clientID: '${clientId}',
         callbackURL: '${fn:replace(pageContext.request.requestURL, pageContext.request.requestURI, '')}' + '/plcallback'
     });
 </script>
