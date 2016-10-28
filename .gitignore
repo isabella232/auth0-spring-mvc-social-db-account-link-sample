@@ -9,7 +9,7 @@ release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
-auth0-spring-boot-social-dbconnection-link.iml
+*.iml
 .idea
 
 
