@@ -35,9 +35,11 @@ public class LoginCallbackController extends Auth0CallbackHandler {
             try {
                 final Tokens tokens = fetchTokens(req);
                 final Auth0User auth0User = auth0Client.getUserProfile(tokens);
-                final String managementToken = appConfig.getManagementToken();
                 final String connection = appConfig.getPasswordConnection();
                 final String domain = auth0Config.getDomain();
+                final String clientId = auth0Config.getClientId();
+                final String clientSecret = auth0Config.getClientSecret();
+                final String managementToken = auth0.getManagementToken(domain, clientId, clientSecret);
                 store(auth0.hasPasswordUserProfile(auth0User, domain, managementToken, connection), req);
                 store(tokens, auth0User, req);
                 NonceUtils.removeNonceFromStorage(req);

@@ -118,24 +118,20 @@ Enter your:
 `client_id`, `client_secret`, `domain`, `managementToken`, `passwordConnection`, and `socialConnection` information into `src/main/resources/auth0.properties`
 
 
-For the `managementToken` token, you shall need to visit our [management api page](https://auth0.com/docs/api/management/v2#!/Users/patch_users_by_id)
+Internally, this application uses Client Credentials Grant flow to obtain an Auth0 APIv2 Management Token.
+You can set this up from the API section of the Auth0 Dashboard.
 
 Ensure you select the following grants:
 
-
-`update:users_app_metadata`
-
-`read:users`
+```
+read:users
+update:users
+read:users_app_metadata
+update:users_app_metadata
+```
 
 This is because for account linking we need update permission, and for reading user information on a specific
 connection we need read users permission (to check if social user has a corresponding password connection)
-
-
-Use our token management form to automatically generate the token, and copy the token created
-
-
-![](img/token-generator.jpg)
-
 
 For the `passwordConnection`, this the name of your database connection in the Auth0 Dashboard (whatever you named it) e.g `DBConn1`
 

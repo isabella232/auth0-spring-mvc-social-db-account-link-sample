@@ -5,14 +5,15 @@ import com.auth0.Auth0User;
 import com.auth0.Tokens;
 import com.auth0.authentication.result.UserIdentity;
 import com.auth0.web.Auth0Config;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
+import okhttp3.*;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.Validate;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.monoid.json.JSONArray;
-import us.monoid.json.JSONObject;
 import us.monoid.web.JSONResource;
 import us.monoid.web.Resty;
 
@@ -20,7 +21,6 @@ import java.net.URLEncoder;
 import java.util.List;
 import java.util.function.BiFunction;
 
-import static us.monoid.web.Resty.content;
 
 /**
  * Wrapper implementation around Auth0 service calls
@@ -43,6 +43,39 @@ public class Auth0Impl implements Auth0 {
         this.appConfig = appConfig;
     }
 
+    public String getManagementToken(final String domain, final String clientId, final String clientSecret) {
+
+        try {
+
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode rootNode = mapper.createObjectNode();
+            ((ObjectNode) rootNode).put("client_id", clientId);
+            ((ObjectNode) rootNode).put("client_secret", clientSecret);
+            ((ObjectNode) rootNode).put("audience", "https://" + domain + "/api/v2/");
+            ((ObjectNode) rootNode).put("grant_type", "client_credentials");
+
+            String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
+            System.out.println(jsonString);
+
+            OkHttpClient client = new OkHttpClient();
+
+            MediaType mediaType = MediaType.parse("application/json");
+            RequestBody body = RequestBody.create(mediaType, jsonString);
+            Request request = new Request.Builder().url("https://" + domain + "/oauth/token").post(body)
+                    .addHeader("content-type", "application/json").addHeader("cache-control", "no-cache").build();
+
+            Response response = client.newCall(request).execute();
+            String jsonData = response.body().string();
+            org.json.JSONObject responseJson = new org.json.JSONObject(jsonData);
+            final String mgmtToken = (String) responseJson.get("access_token");
+            return mgmtToken;
+
+        } catch (Exception ex) {
+            throw new IllegalStateException("Error retrieving profile information from Auth0", ex);
+        }
+    }
+
+
     @Override
     public Auth0User linkAccount(final Auth0User user, final Tokens tokens, final Tokens existingTokens) {
         // link accounts here
@@ -55,11 +88,11 @@ public class Auth0Impl implements Auth0 {
             final String linkUri = getUri("/api/v2/users/") + encodedPrimaryAccountUserId + "/identities";
             final Resty resty = new Resty();
             resty.withHeader("Authorization", "Bearer " + primaryAccountJwt);
-            final JSONObject json = new JSONObject();
+            final us.monoid.json.JSONObject json = new us.monoid.json.JSONObject();
             json.put("link_with", secondaryAccountJwt);
-            final JSONResource linkedProfileInfo = resty.json(linkUri, content(json));
+            final JSONResource linkedProfileInfo = resty.json(linkUri, us.monoid.web.Resty.content(json));
             final JSONArray profileArray = linkedProfileInfo.array();
-            final JSONObject firstProfileEntry = profileArray.getJSONObject(0);
+            final us.monoid.json.JSONObject firstProfileEntry = profileArray.getJSONObject(0);
             final String primaryConnectionType = (String) firstProfileEntry.get("connection");
             final String expectedPrimaryConnectionType = appConfig.getPasswordConnection();
             if (!expectedPrimaryConnectionType.equals(primaryConnectionType)) {

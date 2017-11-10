@@ -10,9 +10,6 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties("auth0")
 public class AppConfig {
 
-    @Value(value = "${auth0.managementToken}")
-    protected String managementToken;
-
     @Value(value = "${auth0.passwordConnection}")
     protected String passwordConnection;
 
@@ -25,10 +22,6 @@ public class AppConfig {
     @Value(value = "${auth0.accountLinkRedirectOnFail}")
     protected String accountLinkRedirectOnFail;
 
-
-    public String getManagementToken() {
-        return managementToken;
-    }
 
     public String getPasswordConnection() {
         return passwordConnection;
