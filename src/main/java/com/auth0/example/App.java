@@ -17,6 +17,11 @@ import org.springframework.context.annotation.PropertySources;
 public class App {
 
 	public static void main(final String[] args) throws Exception {
+
+		// For proxying if working Dev only
+//		System.setProperty("http.proxyHost", "127.0.0.1");
+//		System.setProperty("http.proxyPort", "8889");
+
 		SpringApplication.run(App.class, args);
 	}
 

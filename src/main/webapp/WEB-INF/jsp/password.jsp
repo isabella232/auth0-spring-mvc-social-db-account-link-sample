@@ -11,16 +11,20 @@
     <link rel="stylesheet" type="text/css" href="/css/jquery.growl.css"/>
     <link rel="stylesheet" type="text/css" href="/css/password.css">
     <script src="http://code.jquery.com/jquery.js"></script>
-    <script src="//cdn.auth0.com/w2/auth0-7.2.1.js"></script>
+    <script src="https://cdn.auth0.com/js/auth0/9.0.0-beta.1/auth0.min.js"></script>
     <script src="/js/jquery.growl.js" type="text/javascript"></script>
 </head>
 <body>
 
 <script type="text/javascript">
-    var auth0 = new Auth0({
+    var auth0Instance = new auth0.WebAuth({
         domain: '${domain}',
         clientID: '${clientId}',
-        callbackURL: '${fn:replace(pageContext.request.requestURL, pageContext.request.requestURI, '')}' + '/plcallback'
+        redirectUri: '${fn:replace(pageContext.request.requestURL, pageContext.request.requestURI, '')}' + '/plcallback',
+        responseType: 'code',
+        audience: 'https://' + '${domain}' + '/userinfo',
+        scope: 'openid profile'
+
     });
 </script>
 
@@ -101,12 +105,11 @@
 
     $('#password-btn').click(function () {
         var password = $('#password').val();
-        auth0.login({
-            state: '${state}',
-            sso: false,
-            connection: '${passwordConnection}',
-            username: '${email}',
-            password: password
+        auth0Instance.login({
+          realm: '${passwordConnection}',
+          state: '${state}',
+          username: '${email}',
+          password: password
         }, function (err) {
             if (err) {
                 console.error("Error: " + err.message);
